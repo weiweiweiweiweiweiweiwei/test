@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>原子習慣 - 目錄</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Serif TC', serif;
+            background-color: #fefcf4;
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: flex-end;
+            direction: rtl;
+        }
+        .book-container {
+            width: 60vw;
+            background-color: #fefaf2;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-left: 3px solid #d4af37;
+        }
+        .chapter {
+            margin-bottom: 2rem;
+            padding-right: 1.5rem;
+            border-right: 2px solid #d4af37;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .chapter h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333333;
+            margin: 0;
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+        }
+        .chapter ul {
+            padding: 0;
+            list-style: none;
+            margin: 1rem 0 0 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            border-right: 1px dashed #d4af37;
+            padding-right: 1.5rem;
+        }
+        .chapter.active ul {
+            max-height: 300px;
+        }
+        .chapter ul li {
+            font-size: 1.2rem;
+            color: #555555;
+            margin-bottom: 0.5rem;
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+        }
+    </style>
+</head>
+<body>
+    <div class="book-container" id="toc-container">
+        <!-- 目錄將由 JavaScript 自動生成 -->
+    </div>
+    <script>
+        const chapters = [
+            { title: "原子習慣威力有多大？", lessons: ["原子習慣的驚人力量", "別管目標，專注於系統", "改變身分認同", "習慣養成的四步驟"] },
+            { title: "法則一：讓提示顯而易見", lessons: ["使用習慣積分卡 (Habit Scorecard)", "給習慣時間和地點", "習慣堆疊法", "改變環境法"] },
+            { title: "法則二：讓習慣有吸引力", lessons: ["讓習慣有吸引力", "誘惑綑綁法", "模仿他人法", "轉念法"] },
+            { title: "法則三：讓行動輕而易舉", lessons: ["頻率比時間重要", "最小努力原則", "兩分鐘法則"] },
+            { title: "法則四：讓獎賞令人滿足", lessons: ["讓獎賞令人滿足", "迴紋針策略", "習慣追蹤器", "絕不錯過兩次"] },
+            { title: "總結", lessons: [] }
+        ];
+        const container = document.getElementById("toc-container");
+        chapters.forEach(chapter => {
+            const chapterElement = document.createElement("div");
+            chapterElement.className = "chapter";
+            chapterElement.innerHTML = `<h2>${chapter.title}</h2><ul>${chapter.lessons.map(lesson => `<li>${lesson}</li>`).join("")}</ul>`;
+            chapterElement.addEventListener("click", () => {
+                chapterElement.classList.toggle("active");
+            });
+            container.appendChild(chapterElement);
+        });
+    </script>
+</body>
+</html>

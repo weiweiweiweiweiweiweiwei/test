@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        @import url('https://unpkg.com/normalize.css') layer(normalize);
+
+        @layer normalize, base, demo, scroll;
+
+        @layer popover {
+            :root {
+                --bottom: 2rem;
+                --speed: 0.3s;
+                --power-in: linear(0 0%,
+                        0.0039 6.25%,
+                        0.0156 12.5%,
+                        0.0352 18.75%,
+                        0.0625 25%,
+                        0.0977 31.25%,
+                        0.1407 37.5%,
+                        0.1914 43.74%,
+                        0.2499 49.99%,
+                        0.3164 56.25%,
+                        0.3906 62.5%,
+                        0.5625 75%,
+                        0.7656 87.5%,
+                        1 100%);
+                --power-in-out: linear(0 0%,
+                        0.0012 14.95%,
+                        0.0089 22.36%,
+                        0.0297 28.43%,
+                        0.0668 33.43%,
+                        0.0979 36.08%,
+                        0.1363 38.55%,
+                        0.2373 43.07%,
+                        0.3675 47.01%,
+                        0.5984 52.15%,
+                        0.7121 55.23%,
+                        0.8192 59.21%,
+                        0.898 63.62%,
+                        0.9297 66.23%,
+                        0.9546 69.06%,
+                        0.9733 72.17%,
+                        0.9864 75.67%,
+                        0.9982 83.73%,
+                        1 100%);
+                --power-out: linear(0 0%,
+                        0.2342 12.49%,
+                        0.4374 24.99%,
+                        0.6093 37.49%,
+                        0.6835 43.74%,
+                        0.7499 49.99%,
+                        0.8086 56.25%,
+                        0.8593 62.5%,
+                        0.9023 68.75%,
+                        0.9375 75%,
+                        0.9648 81.25%,
+                        0.9844 87.5%,
+                        0.9961 93.75%,
+                        1 100%);
+                --ease: var(--power-in);
+                --trigger-width: 190px;
+                --trigger-height: 44px;
+            }
+
+            :root:has(:popover-open) {
+                --ease: var(--power-out);
+            }
+
+            [popover]:popover-open .backdrop-blur {
+                scale: 1;
+                opacity: 1;
+            }
+
+            @starting-style {
+                [popover]:popover-open .backdrop-blur {
+                    scale: 0;
+                    opacity: 0;
+                }
+            }
+
+            .trigger {
+                width: var(--trigger-width);
+                height: var(--trigger-height);
+                border-radius: 22px;
+                color: light-dark(canvas, canvasText);
+                border: 0;
+                outline-color: white;
+            }
+
+            :root:has(.trigger:focus-visible) [popover] {
+                outline: 2px solid white;
+            }
+
+            .trigger,
+            .contents {
+                background: light-dark(hsl(0 0% 8%), hsl(0 0% 14%));
+            }
+
+            .contents {
+                display: flex;
+                overflow: hidden;
+                height: 100%;
+                width: 100%;
+                flex-direction: column-reverse;
+                border-radius: 22px;
+                padding: 0 6px;
+                transition: padding var(--speed);
+                transform: translate3d(0, 0, 0);
+
+                @starting-style {
+                    padding: 1rem;
+                }
+            }
+
+            @starting-style {
+                [popover]:popover-open .contents {
+                    padding: 0 6px;
+                }
+            }
+
+            [popover] {
+                border: 0px;
+                border-radius: 22px;
+                background: transparent;
+                padding-block: 0;
+                overflow: visible;
+            }
+
+            [popover] .trigger__details {
+                min-height: 44px;
+                flex-basis: 44px;
+            }
+
+            .trigger__details {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding-left: 0.5rem;
+                padding-right: 0.25rem;
+                width: 100%;
+            }
+
+            .trigger__details svg {
+                width: 24px;
+            }
+
+            .trigger__details .lines {
+                animation: draw both linear;
+                animation-timeline: --content;
+            }
+
+            .trigger__details>span:first-of-type {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                text-align: left;
+                gap: 0.25rem;
+
+                svg {
+                    width: 18px;
+                }
+            }
+
+            @keyframes draw {
+                to {
+                    stroke-dashoffset: 0;
+                }
+            }
+
+            [popovertargetaction] {
+                anchor-name: --opener;
+            }
+
+            [popover]:popover-open {
+                display: flex;
+            }
+
+            [popover]:popover-open .contents {
+                padding: 1rem;
+            }
+
+            @starting-style {
+                [popover]:popover-open .contents {
+                    padding: 0 6px;
+                }
+            }
+
+            [data-alignment='left'] .trigger,
+            [data-alignment='left'] [popover] {
+                left: 1rem;
+            }
+
+            [data-alignment='right'] .trigger,
+            [data-alignment='right'] [popover] {
+                right: 1rem;
+            }
+
+            [data-alignment='center'] .trigger,
+            [data-alignment='center'] [popover] {
+                left: 50%;
+                translate: -50% 0;
+            }
+
+            [popover] {
+                flex-direction: column-reverse;
+                position-anchor: --opener;
+                transition-property: display, overlay, width, height;
+                transition-duration: var(--speed);
+                transition-behavior: allow-discrete;
+                transition-timing-function: var(--ease);
+                color: white;
+                margin: unset;
+                inset: unset;
+                bottom: var(--bottom);
+                width: var(--trigger-width);
+                height: var(--trigger-height);
+                z-index: 99999999;
+                padding: 0;
+                interpolate-size: allow-keywords;
+
+                @starting-style {
+                    width: var(--trigger-width);
+                    height: var(--trigger-height);
+                }
+            }
+
+            [popover] ol {
+                padding-inline: 0.5rem;
+                padding-left: 2.5rem;
+                list-style: pad-it;
+                display: flex;
+                width: max-content;
+                margin: 0;
+                flex-direction: column;
+                filter: blur(4px);
+                opacity: 0;
+                transition: filter var(--speed), opacity var(--speed);
+                transition-timing-function: var(--ease);
+            }
+
+            [popover]:popover-open ol {
+                filter: blur(0px);
+                opacity: 1;
+            }
+
+            @starting-style {
+                [popover]:popover-open ol {
+                    filter: blur(4px);
+                    opacity: 0;
+                }
+            }
+
+            [popover]:popover-open {
+                width: var(--content-width, fit-content);
+                height: var(--content-height, fit-content);
+            }
+
+            li::marker {
+                color: #999;
+            }
+
+            li:has(a:is(:hover, :focus-visible))::marker {
+                color: #fff;
+            }
+
+            ol li a {
+                color: inherit;
+                white-space: nowrap;
+                padding-block: 0.5rem;
+                text-decoration: none;
+                display: inline-block;
+                color: #999;
+                flex: 1;
+                width: 100%;
+
+                &:is(:hover, :focus-visible) {
+                    color: #fff;
+                }
+            }
+
+            @starting-style {
+                [popover]:popover-open {
+                    width: var(--trigger-width);
+                    height: var(--trigger-height);
+                }
+            }
+
+            [popover]::backdrop {
+                transition-property: overlay, display, opacity;
+                transition-duration: var(--speed);
+                transition-behavior: allow-discrete;
+                transition-timing-function: var(--ease);
+                background: hsl(0 0% 0% / 0.25);
+                opacity: 0;
+                backdrop-filter: blur(8px);
+            }
+
+            [popover] button {
+                background: #0000;
+                border: none;
+                padding: 0;
+                color: inherit;
+                cursor: pointer;
+            }
+
+            [data-alignment='right'] [popover]::backdrop {
+                mask: linear-gradient(135deg, #0000 0%, #fff 100%);
+            }
+
+            [data-alignment='center'] [popover]::backdrop {
+                mask: linear-gradient(180deg, #0000 0%, #fff 100%);
+            }
+
+            [data-alignment='left'] [popover]::backdrop {
+                mask: linear-gradient(225deg, #0000 0%, #fff 100%);
+            }
+
+            [popover]:popover-open::backdrop {
+                opacity: 1;
+            }
+
+            @starting-style {
+                [popover]:popover-open::backdrop {
+                    opacity: 0;
+                }
+            }
+        }
+
+        @layer scroll {
+            :root {
+                timeline-scope: --content;
+            }
+
+            @property --progress {
+                initial-value: 0;
+                syntax: '<integer>';
+                inherits: true;
+            }
+
+            .trigger {
+                anchor-name: --opener;
+                position: fixed;
+                bottom: var(--bottom);
+                z-index: 9999999;
+                view-transition-name: trigger;
+                cursor: pointer;
+            }
+
+            :root {
+                animation: scroll-progress both linear;
+                animation-timeline: --content;
+            }
+
+            .content {
+                scroll-timeline: --content;
+            }
+
+            @keyframes scroll-progress {
+                to {
+                    --progress: 100;
+                }
+            }
+
+            :root {
+                counter-reset: progress var(--progress);
+            }
+
+            .progress {
+                border-radius: 100px;
+                background: light-dark(hsl(0 0% 35%), hsl(0 0% 0%));
+                padding: 0.25rem 0.5rem;
+            }
+
+            .progress::before {
+                font-variant-numeric: tabular-nums;
+                content: counter(progress) '%';
+            }
+        }
+
+        @layer demo {
+            @media (prefers-reduced-motion: no-preference) {
+                .content {
+                    scroll-behavior: smooth;
+                }
+            }
+
+            body {
+                height: 100svh;
+                overflow: hidden;
+            }
+
+            @counter-style pad-it {
+                system: extends decimal;
+                pad: 2 '0';
+            }
+
+            .content {
+                width: 100vw;
+                height: 100svh;
+                overflow: auto;
+                padding-block: 80px;
+                mask: linear-gradient(#0000, #fff 80px calc(100% - 80px), #0000);
+
+                @media (max-width: 680px) {
+                    mask: linear-gradient(#0000 60px, #fff 80px calc(100% - 80px), #0000);
+                }
+
+                scrollbar-color: hsl(0 100% 40%) #0000;
+                scrollbar-width: thin;
+            }
+
+            body {
+                --font-level: 0;
+            }
+
+            h1 {
+                --font-level: 4;
+                text-wrap: balance;
+                line-height: 1;
+                margin: 0;
+                margin-bottom: 2rem;
+
+                span {
+                    font-size: 0.35em;
+                }
+            }
+
+            header,
+            main {
+                width: 60ch;
+                max-width: calc(100vw - 2rem);
+                margin: 0 auto;
+            }
+
+            footer {
+                padding: 1rem;
+                font-size: 0.875rem;
+                opacity: 0.875;
+                text-align: center;
+            }
+
+            main {
+                counter-reset: section;
+            }
+
+            section {
+                counter-increment: section 1;
+            }
+
+            h2::before {
+                content: counter(section, pad-it) '. ';
+            }
+
+            header p {
+                font-size: 1.125rem;
+            }
+
+            section:not(:last-of-type) {
+                margin-bottom: 6rem;
+            }
+
+            section {
+                scroll-margin-top: 80px;
+            }
+
+            p {
+                margin: 0;
+            }
+
+            h2 {
+                margin: 0;
+                text-wrap: balance;
+            }
+
+            h2 {
+                margin-bottom: 1.25rem;
+            }
+
+            p:not(:last-of-type) {
+                margin-bottom: 1rem;
+            }
+
+            main p {
+                color: color-mix(in hsl, canvasText, canvas 10%);
+                font-weight: 300;
+            }
+
+            hr {
+                opacity: 0.5;
+            }
+
+            hr,
+            header,
+            main {
+                margin-bottom: 6rem;
+            }
+
+            .heading {
+                position: relative;
+                display: flex;
+
+                &:is(:hover, :focus-within) a {
+                    opacity: 1;
+                }
+
+                a {
+                    opacity: 0;
+                    width: 24px;
+                    aspect-ratio: 1;
+                    position: absolute;
+                    color: inherit;
+                    right: calc(100% + 0.5rem);
+                    top: 0;
+                    display: grid;
+                    place-items: center;
+                    transition: opacity 0.2s;
+                    outline-color: transparent;
+                    border-radius: 6px;
+
+                    &:focus-visible {
+                        background: color-mix(in hsl, canvasText, #0000 75%);
+                    }
+
+                    svg {
+                        width: 20px;
+                    }
+                }
+            }
+        }
+
+        @layer base {
+            :root {
+                --font-size-min: 14;
+                --font-size-max: 16;
+                --font-ratio-min: 1.2;
+                --font-ratio-max: 1.33;
+                --font-width-min: 375;
+                --font-width-max: 1280;
+            }
+
+            html {
+                color-scheme: light dark;
+            }
+
+            [data-theme='light'] {
+                color-scheme: light only;
+            }
+
+            [data-theme='dark'] {
+                color-scheme: dark only;
+            }
+
+            :where(.fluid) {
+                --fluid-min: calc(var(--font-size-min) * pow(var(--font-ratio-min), var(--font-level, 0)));
+                --fluid-max: calc(var(--font-size-max) * pow(var(--font-ratio-max), var(--font-level, 0)));
+                --fluid-preferred: calc((var(--fluid-max) - var(--fluid-min)) / (var(--font-width-max) - var(--font-width-min)));
+                --fluid-type: clamp((var(--fluid-min) / 16) * 1rem,
+                        ((var(--fluid-min) / 16) * 1rem) - (((var(--fluid-preferred) * var(--font-width-min)) / 16) * 1rem) + (var(--fluid-preferred) * var(--variable-unit, 100vi)),
+                        (var(--fluid-max) / 16) * 1rem);
+                font-size: var(--fluid-type);
+            }
+
+            *,
+            *:after,
+            *:before {
+                box-sizing: border-box;
+            }
+
+            body {
+                display: grid;
+                place-items: center;
+                min-height: 100vh;
+                background: light-dark(white, black);
+                font-family: 'SF Pro Text', 'SF Pro Icons', 'AOS Icons', 'Helvetica Neue',
+                    Helvetica, Arial, sans-serif, system-ui;
+            }
+
+            body::before {
+                --size: 45px;
+                --line: color-mix(in lch, canvasText, transparent 70%);
+                content: '';
+                height: 100vh;
+                width: 100vw;
+                position: fixed;
+                background: linear-gradient(90deg,
+                        var(--line) 1px,
+                        transparent 1px var(--size)) 50% 50% / var(--size) var(--size),
+                    linear-gradient(var(--line) 1px, transparent 1px var(--size)) 50% 50% / var(--size) var(--size);
+                mask: linear-gradient(-20deg, transparent 50%, white);
+                top: 0;
+                transform-style: flat;
+                pointer-events: none;
+                z-index: -1;
+            }
+
+            .bear-link {
+                color: canvasText;
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                width: 48px;
+                aspect-ratio: 1;
+                display: grid;
+                place-items: center;
+                opacity: 0.8;
+            }
+
+            :where(.x-link, .bear-link):is(:hover, :focus-visible) {
+                opacity: 1;
+            }
+
+            .bear-link svg {
+                width: 75%;
+            }
+
+            /* Utilities */
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border-width: 0;
+            }
+        }
+
+        div.tp-dfwv {
+            position: fixed;
+        }
+
+        @counter-style pad-example {
+            system: extends decimal;
+            suffix: ' ';
+            pad: 2 ' ';
+        }
+
+
+
+
+
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #d7d7d74e;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+
+        .question-box {
+            margin: 10px auto;
+            font-size: 1.6em;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            position: relative;
+            padding: 20px;
+            margin: 20px 0;
+            background-color: #ffffff4e;
+            border-radius: 12px;
+            border: 2px solid #555;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            border-bottom-width: 3.8px;
+
+        }
+
+        .option:hover {
+            background-color: #d4d4d4d3;
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #888;
+            border-radius: 6px;
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1c1f26;
+        }
+
+        .option.correct {
+            background-color: #49eb494d;
+            border-color: #54c30a;
+        }
+
+        .option.correct .checkbox {
+            background-image: url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMSIgaGVpZ2h0PSIxNSI+PHBhdGggZmlsbD0iIzU4Q0MwMiIgZmlsbC1ydWxlPSJub256ZXJvIiBkPSJNOC4zMzUgMTAuMjA4bDguNjk3LTguNjk3YTIgMiAwIDAgMSAyLjgyOSAyLjgyOGwtOS40NTQgOS40NTRhMi45MyAyLjkzIDAgMCAxLTQuMTQ0IDBMMS4zMTUgOC44NDVhMiAyIDAgMSAxIDIuODI4LTIuODI5bDQuMTkyIDQuMTkyeiIvPjwvc3ZnPg==");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 18px;
+            border-color: #58CC02;
+        }
+
+        .option.wrong {
+            background-color: #f439394e;
+            border-color: #e84a4a;
+        }
+
+        .option.wrong .checkbox {
+            background-image: url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCI+PHBhdGggZmlsbD0iI0U1RTVFNSIgZmlsbC1ydWxlPSJub256ZXJvIiBkPSJNNC4xMzUgMS4zMDdsNC45ODIgNC45OCA0Ljk4My00Ljk4YTIgMiAwIDAgMSAyLjctLjExN2wuMTI4LjExN2EyIDIgMCAwIDEgMCAyLjgyOGwtNC45ODIgNC45ODIgNC45ODIgNC45ODNhMiAyIDAgMCAxLTIuODI4IDIuODI4bC00Ljk4My00Ljk4Mi00Ljk4MiA0Ljk4MmEyIDIgMCAwIDEtMi43MDEuMTE3bC0uMTI3LS4xMTdhMiAyIDAgMCAxIDAtMi44MjhsNC45OC00Ljk4My00Ljk4LTQuOTgyYTIgMiAwIDEgMSAyLjgyOC0yLjgyOHoiLz48L3N2Zz4=");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 16px;
+            border-color: #e84a4a;
+        }
+
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="trigger" popovertarget="index" popovertargetaction="toggle">
+        <div class="trigger__details">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <mask id="mask0_3000_5" maskUnits="userSpaceOnUse" x="0" y="2" width="24" height="20">
+                    <path
+                        d="M3 6.75L19.0541 6.75L21.027 6.75H23.0135L23 3.5L1 3.5L1 12L23 12L23.0135 21L1 21L1 17.25L13 17.25"
+                        stroke-width="2.5" stroke="gray" />
+                </mask>
+                <g mask="url(#mask0_3000_5)">
+                    <rect x="3" y="6" width="18" height="12" fill="gray" />
+                </g>
+                <mask id="mask1_3000_5" maskUnits="userSpaceOnUse" x="0" y="2" width="24" height="20">
+                    <path class="lines"
+                        d="M3 6.75L19.0541 6.75L21.027 6.75H23.0135L23 3.5L1 3.5L1 12L23 12L23.0135 21L1 21L1 17.25L13 17.25"
+                        stroke="white" stroke-width="2.5" pathLength="1.025" stroke-dasharray="1.025"
+                        stroke-dashoffset="1.025" />
+                </mask>
+                <g mask="url(#mask1_3000_5)">
+                    <rect x="3" y="6" width="18" height="12" fill="white" />
+                </g>
+            </svg>
+
+            <span>
+                <span>Index</span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                </svg>
+            </span>
+            <span class="progress"></span>
+        </div>
+    </button>
+    <div popover="auto" id="index">
+        <div class="contents">
+            <button popovertarget="index" popovertargetaction="hide">
+                <div class="trigger__details">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <mask id="mask0_3000_5" maskUnits="userSpaceOnUse" x="0" y="2" width="24" height="20">
+                            <path
+                                d="M3 6.75L19.0541 6.75L21.027 6.75H23.0135L23 3.5L1 3.5L1 12L23 12L23.0135 21L1 21L1 17.25L13 17.25"
+                                stroke-width="2.5" stroke="gray" />
+                        </mask>
+                        <g mask="url(#mask0_3000_5)">
+                            <rect x="3" y="6" width="18" height="12" fill="gray" />
+                        </g>
+                        <mask id="mask1_3000_5" maskUnits="userSpaceOnUse" x="0" y="2" width="24" height="20">
+                            <path class="lines"
+                                d="M3 6.75L19.0541 6.75L21.027 6.75H23.0135L23 3.5L1 3.5L1 12L23 12L23.0135 21L1 21L1 17.25L13 17.25"
+                                stroke="white" stroke-width="2.5" pathLength="1.025" stroke-dasharray="1.025"
+                                stroke-dashoffset="1.025" />
+                        </mask>
+                        <g mask="url(#mask1_3000_5)">
+                            <rect x="3" y="6" width="18" height="12" fill="white" />
+                        </g>
+                    </svg>
+
+                    <span>
+                        <span>Index</span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                        </svg>
+                    </span>
+                    <span class="progress"></span>
+                </div>
+            </button>
+            <ol>
+                <li><a href="#user-centered-design">User-Centered Design</a></li>
+                <li>
+                    <a href="#responsive-layouts">Responsive Layouts and Visual Hierarchy</a>
+                </li>
+                <li>
+                    <a popovertarget="index" popovertargetaction="hide" href="#typography">Typography for
+                        Readability</a>
+                </li>
+                <li>
+                    <a popovertarget="index" popovertargetaction="hide" href="#color-contrast">Color, Contrast, and
+                        Branding</a>
+                </li>
+                <li>
+                    <a popovertarget="index" popovertargetaction="hide" href="#motion-design">Adding Motion with
+                        Animations</a>
+                </li>
+                <li>
+                    <a popovertarget="index" popovertargetaction="hide" href="#accessibility">Accessibility and
+                        Inclusivity</a>
+                </li>
+                <li>
+                    <a popovertarget="index" popovertargetaction="hide" href="#conclusion">Conclusion</a>
+                </li>
+            </ol>
+        </div>
+    </div>
+    <div class="content">
+        <header>
+            <h1 class="fluid">Craft of UI</h1>
+            <p>
+                A well-crafted UI can turn a simple webpage into an interactive
+                journey, guiding users and creating memorable impressions through
+                thoughtful design and seamless motion. In web development, creating a
+                UI that’s visually appealing, responsive, and motion-driven requires a
+                blend of creativity, coding skills, and a deep understanding of user
+                needs.
+            </p>
+        </header>
+        <main>
+            <section id="user-centered-design" style="view-timeline: --one">
+                <div class="heading">
+                    <h2>User-Centered Design</h2>
+                    <a href="#user-centered-design">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+                        </svg>
+                        <span class="sr-only">Section: User-Centered Design</span>
+                    </a>
+                </div>
+
+    <div class="quiz-container">
+        <div class="question-box" id="question"></div>
+        <div class="options" id="options"></div>
+        <div id="explanation"></div>
+    </div>
+
+    <script>
+        const questionText = document.getElementById("question");
+        const optionsContainer = document.getElementById("options");
+        const explanation = document.getElementById("explanation");
+        const questionId = "page1-1";
+
+        const questions = [
+            {
+                question: "穿山甲的生活習性為何？",
+                options: [
+                    { text: "喜愛白天曬太陽，晚上進行瑜伽冥想", correct: false },
+                    { text: "是夜行性動物，透過嗅覺和聽覺尋找食物", correct: true },
+                    { text: "喜愛參加動物派對，並擅長跳探戈", correct: false },
+                    { text: "主要以捕捉老虎和鯨魚為生", correct: false }
+                ]
+            }
+        ];
+
+        function loadQuestion() {
+            const currentQuestion = questions[0];
+            questionText.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = "";
+            explanation.textContent = "";
+
+            const answered = sessionStorage.getItem(questionId) === "complete";
+
+            currentQuestion.options.forEach((option, index) => {
+                const optionDiv = document.createElement("div");
+                optionDiv.classList.add("option");
+                optionDiv.innerHTML = `
+                    <div class="checkbox"></div>
+                    <span>${option.text}</span>
+                `;
+                if (answered) {
+                    if (option.correct) {
+                        optionDiv.classList.add("correct");
+                    }
+                    optionDiv.classList.add("disabled");
+                } else {
+                    optionDiv.onclick = () => checkAnswer(optionDiv, option.correct);
+                }
+                optionsContainer.appendChild(optionDiv);
+            });
+        }
+
+        function checkAnswer(clickedOption, isCorrect) {
+            const allOptions = document.querySelectorAll(".option");
+
+            allOptions.forEach(opt => {
+                opt.classList.add("disabled");
+                opt.onclick = null;
+            });
+
+            if (isCorrect) {
+                clickedOption.classList.add("correct");
+            } else {
+                clickedOption.classList.add("wrong");
+                const correctOption = Array.from(allOptions).find((opt, i) => questions[0].options[i].correct);
+                if (correctOption) correctOption.classList.add("correct");
+            }
+
+            sessionStorage.setItem(questionId, "complete");
+        }
+
+        window.onload = loadQuestion;
+    </script>
+
+                <h1>
+                </h1>
+                <p>
+                    User-centered design (UCD) is the backbone of effective UI in web
+                    development. Every decision in the design process should revolve
+                    around the user’s needs, behavior, and preferences. Conducting user
+                    research, analyzing browsing habits, and testing prototypes are
+                    essential steps for developing a web UI that’s intuitive and
+                    enjoyable.
+                </p>
+                <p>
+                    Understanding the end-user’s journey on the website can help
+                    designers pinpoint where users might encounter difficulties or
+                    confusion. Techniques like journey mapping and persona creation
+                    enable designers to simulate the user's interactions, focusing
+                    design improvements where they are most needed. Ultimately, a
+                    user-centered approach leads to a more engaging and efficient
+                    experience.
+                </p>
+                <p>
+                    Additionally, iterative feedback loops involving user testing allow
+                    designers to refine features, identify pain points, and ensure that
+                    any updates align with user needs. This continuous improvement cycle
+                    keeps the design relevant and responsive, adapting to changes in
+                    user behavior and technological advancements.
+                </p>
+            </section>
+
+            <section id="responsive-layouts" style="view-timeline: --two">
+                <div class="heading">
+                    <h2>Responsive Layouts and Visual Hierarchy</h2>
+                    <a href="#responsive-layouts">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+                        </svg>
+                        <span class="sr-only">Section: Responsive Layouts and Visual Hierarchy</span>
+                    </a>
+                </div>
+                <p>
+                    In web design, layouts need to be responsive and visually coherent
+                    across devices of all screen sizes. By utilizing CSS Flexbox, Grid
+                    layouts, and media queries, designers can create adaptable UIs that
+                    maintain visual integrity and usability on any screen. Effective
+                    layouts employ a clear visual hierarchy, often leveraging grids,
+                    whitespace, and alignment to make essential information easy to
+                    locate.
+                </p>
+                <p>
+                    With the rise of mobile browsing, a responsive layout is now a
+                    standard requirement. Implementing fluid grids and scalable images
+                    ensures that content looks great and is easy to navigate on screens
+                    of any size. A well-designed layout optimizes for accessibility and
+                    interaction, adapting seamlessly to user input methods, whether by
+                    mouse, touch, or keyboard.
+                </p>
+                <p>
+                    Using visual hierarchy principles such as size, color, and placement
+                    further guides users to essential actions and information. For
+                    example, call-to-action buttons should be easily noticeable,
+                    encouraging engagement. Strategic spacing and alignment enhance
+                    readability, making the layout feel organized and intuitive.
+                </p>
+            </section>
+
+            <section id="typography" style="view-timeline: --three">
+                <div class="heading">
+                    <h2>Typography for Readability</h2>
+                    <a href="#typography">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+                        </svg>
+                        <span class="sr-only">Section: Typography for Readability</span>
+                    </a>
+                </div>
+                <p>
+                    Typography in web UI design is more than just font choice—it’s about
+                    creating a hierarchy and rhythm that guides readers naturally
+                    through content. Selecting web-safe fonts or using modern,
+                    browser-compatible font libraries can improve loading times and
+                    accessibility.
+                </p>
+                <p>
+                    Consistent typography establishes a brand’s tone and personality.
+                    For example, sans-serif fonts lend a modern, clean look, while serif
+                    fonts are often associated with sophistication and tradition.
+                    Pairing fonts effectively—using one font for headings and another
+                    for body text—can improve readability and make the interface
+                    visually appealing.
+                </p>
+                <p>
+                    Accessibility is another key consideration. Ensuring sufficient
+                    contrast between text and background, appropriate font sizes, and
+                    comfortable line spacing helps prevent eye strain. The right
+                    typography settings contribute to an inclusive user experience,
+                    allowing everyone to interact with and enjoy the content.
+                </p>
+            </section>
+
+            <section id="color-contrast" style="view-timeline: --four">
+                <div class="heading">
+                    <h2>Color, Contrast, and Branding</h2>
+                    <a href="#color-contrast">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+                        </svg>
+                        <span class="sr-only">Section: Color, Contrast, and Branding</span>
+                    </a>
+                </div>
+                <p>
+                    In web UI, color and contrast play a powerful role in branding and
+                    functionality. Selecting a cohesive color palette that aligns with a
+                    brand’s identity can create emotional resonance with users, while
+                    also ensuring functional clarity. High contrast between text and
+                    background elements enhances readability and is crucial for web
+                    accessibility standards.
+                </p>
+                <p>
+                    Colors can evoke emotions and build connections with users. For
+                    instance, blue often conveys trustworthiness and reliability, making
+                    it a popular choice for finance and technology brands. Contrasting
+                    colors highlight interactive elements, helping users quickly
+                    identify buttons, links, and navigation.
+                </p>
+                <p>
+                    Beyond aesthetics, color choices should accommodate visual
+                    impairments such as color blindness. By incorporating patterns or
+                    symbols alongside color cues, designers can ensure everyone has a
+                    smooth and understandable experience. Considerations like these make
+                    interfaces not only more beautiful but also more usable.
+                </p>
+            </section>
+
+            <section id="motion-design" style="view-timeline: --five">
+                <div class="heading">
+                    <h2>Adding Motion with Animations</h2>
+                    <a href="#motion-design">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+                        </svg>
+                        <span class="sr-only">Section: Adding Motion with Animations</span>
+                    </a>
+                </div>
+                <p>
+                    Motion design is where UI truly comes to life on the web.
+                    Micro-interactions, such as button hover effects, loading
+                    animations, and scroll-triggered transitions, can make a page feel
+                    responsive and engaging. Using CSS transitions, keyframes, and
+                    JavaScript libraries like GSAP or anime.js, developers can create
+                    smooth animations that enhance usability and draw attention to key
+                    actions.
+                </p>
+                <p>
+                    Animations can subtly guide users and emphasize functionality. For
+                    example, a small bounce effect on a button hover gives a cue that
+                    the button is interactive. Similarly, a progress spinner or loading
+                    animation during load times can reduce user frustration, offering
+                    feedback that the interface is responding.
+                </p>
+                <p>
+                    However, animation should be used mindfully. Excessive motion can be
+                    distracting or even overwhelming. When applied thoughtfully, motion
+                    can enhance storytelling, create a more intuitive experience, and
+                    help users understand the website’s flow and functionality.
+                </p>
+            </section>
+
+            <section id="accessibility" style="view-timeline: --six">
+                <div class="heading">
+                    <h2>Accessibility and Inclusivity</h2>
+                    <a href="#accessibility">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+                        </svg>
+                        <span class="sr-only">Section: Accessibility and Inclusivity</span>
+                    </a>
+                </div>
+                <p>
+                    Web accessibility is fundamental to UI, ensuring that the internet
+                    is usable for all people, regardless of ability. Accessible UI
+                    design means making websites navigable with screen readers, enabling
+                    keyboard-friendly navigation, and using semantic HTML elements for
+                    structure.
+                </p>
+                <p>
+                    Accessibility in UI often involves creating designs that accommodate
+                    a variety of users. This includes adding ARIA labels to non-text
+                    elements, optimizing contrast ratios, and ensuring that text
+                    alternatives are available for non-visual users. Accessibility
+                    considerations make web interfaces inclusive and user-friendly for
+                    people of all abilities.
+                </p>
+                <p>
+                    Inclusive design also means considering language and cultural
+                    differences. Offering multiple language options and designing for
+                    cultural adaptability helps broaden accessibility and global reach.
+                    Making the effort to design inclusively not only complies with
+                    standards but also reflects a commitment to an accessible,
+                    user-friendly internet.
+                </p>
+            </section>
+
+            <hr />
+            <section id="conclusion" style="view-timeline: --seven">
+                <div class="heading sr-only">
+                    <h2>Conclusion</h2>
+                    <a href="#conclusion">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+                        </svg>
+                        <span class="sr-only">Section: Conclusion</span>
+                    </a>
+                </div>
+                <p>
+                    The craft of web UI design lies in harmonizing aesthetics,
+                    functionality, and motion to create intuitive digital experiences.
+                    From typography and color to responsive layouts and interactive
+                    motion, every element should serve a purpose and enhance the user
+                    journey.
+                </p>
+                <p>
+                    For developers, mastering UI is about combining creative techniques
+                    with coding expertise, delivering interfaces that look incredible
+                    and feel effortless. An emphasis on motion, accessibility, and
+                    user-centered design will shape how users experience and interact
+                    with the web in meaningful ways.
+                </p>
+                <p>
+                    As technology evolves, so will the craft of UI design, and those who
+                    adapt will continue to elevate web experiences, creating seamless,
+                    inclusive interfaces that everyone can enjoy.
+                </p>
+            </section>
+        </main>
+        <footer>ʕ◕ᴥ◕ʔ &copy; jhey '24</footer>
+    </div>
+
+
+
+    <script type="module">
+        import { Pane } from "https://cdn.skypack.dev/tweakpane@4.0.4";
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+
+            const popover = document.querySelector("[popover]");
+
+            const config = {
+                alignment: "center",
+                theme: "light"
+            };
+
+            const ctrl = new Pane({
+                title: "Config",
+                expanded: false
+            });
+
+            const update = () => {
+                document.documentElement.dataset.theme = config.theme;
+                document.documentElement.dataset.alignment = config.alignment;
+            };
+
+            const sync = (event) => {
+                if (
+                    !document.startViewTransition ||
+                    (event.target.controller.view.labelElement.innerText !== "Theme" &&
+                        event.target.controller.view.labelElement.innerText !== "Alignment")
+                )
+                    return update();
+                document.startViewTransition(() => update());
+            };
+
+            ctrl.addBinding(config, "alignment", {
+                label: "Alignment",
+                options: {
+                    Left: "left",
+                    Center: "center",
+                    Right: "right"
+                }
+            });
+
+            ctrl.addBinding(config, "theme", {
+                label: "Theme",
+                options: {
+                    System: "system",
+                    Light: "light",
+                    Dark: "dark"
+                }
+            });
+
+            ctrl.on("change", sync);
+            update();
+
+            const links = document.querySelectorAll("ol a");
+            links.forEach((link) => {
+                link.addEventListener("click", () => popover.hidePopover());
+            });
+
+            // Backfill the popover width/height transition
+            if (!CSS.supports("interpolate-size: allow-keywords")) {
+                let set = false;
+                popover.style.setProperty("transition", "none");
+                popover.addEventListener("toggle", () => {
+                    if (!set) {
+                        const { height, width } = popover.getBoundingClientRect();
+                        document.documentElement.style.setProperty(
+                            "--content-height",
+                            `${height}px`
+                        );
+                        document.documentElement.style.setProperty(
+                            "--content-width",
+                            `${width}px`
+                        );
+                        set = true;
+                        popover.hidePopover();
+                        requestAnimationFrame(() => {
+                            popover.showPopover();
+                            popover.style.removeProperty("transition");
+                        });
+                    }
+                });
+            }
+
+
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atomic Habits Course Map</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+    }
+    .unit {
+      width: 200px;
+      background-color: #ffffff;
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      padding: 1.5rem;
+      text-align: center;
+      border-left: 6px solid #bbbbbb;
+      cursor: pointer;
+      transition: transform 0.3s, background-color 0.3s;
+    }
+    .unit.locked {
+      background-color: #f0f0f0;
+      color: #bbbbbb;
+      cursor: not-allowed;
+      border-left-color: #bbbbbb;
+    }
+    .unit.locked h2::after {
+      content: '🔒';
+      margin-left: 0.5rem;
+    }
+    .unit h2 {
+      font-size: 1.25rem;
+      margin: 0 0 0.5rem;
+      font-weight: 700;
+    }
+    .unit ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.9rem;
+    }
+    .unit ul li {
+      margin-bottom: 0.5rem;
+      color: #555555;
+    }
+    .unit.unlocked {
+      background-color: #ffffff;
+      border-left-color: #007bff;
+    }
+    .unit.unlocked:hover {
+      transform: scale(1.05);
+      background-color: #e8f0fe;
+    }
+  </style>
+</head>
+<body>
+  <div id="course-container"></div>
+  <script>
+    const units = [
+      { title: "1. 原子習慣威力有多大？", lessons: ["原子習慣的驚人力量", "別管目標，專注於系統", "改變身分認同", "習慣養成的四步驟"] },
+      { title: "2. 法則一：讓提示顯而易見", lessons: ["使用習慣積分卡", "給習慣時間和地點", "習慣堆疊法", "改變環境法"] },
+      { title: "3. 法則二：讓習慣有吸引力", lessons: ["讓習慣有吸引力", "誘惑綑綁法", "模仿他人法", "轉念法"] },
+      { title: "4. 法則三：讓行動輕而易舉", lessons: ["頻率比時間重要", "最小努力原則", "兩分鐘法則"] },
+      { title: "5. 法則四：讓獎賞令人滿足", lessons: ["讓獎賞令人滿足", "迴紋針策略", "習慣追蹤器", "絕不錯過兩次"] },
+      { title: "6. 總結", lessons: [] }
+    ];
+
+    const container = document.getElementById('course-container');
+    const unlockedIndex = parseInt(sessionStorage.getItem('progress') || '0', 10);
+
+    units.forEach((unit, index) => {
+      const unitDiv = document.createElement('div');
+      unitDiv.className = 'unit' + (index <= unlockedIndex ? ' unlocked' : ' locked');
+      unitDiv.innerHTML = `
+        <h2>${unit.title}</h2>
+        <ul>${unit.lessons.map(lesson => `<li>${lesson}</li>`).join('')}</ul>
+      `;
+      if (index <= unlockedIndex) {
+        unitDiv.addEventListener('click', () => {
+          alert(`進入單元：${unit.title}`);
+          sessionStorage.setItem('progress', index + 1);
+          window.location.reload();
+        });
+      }
+      container.appendChild(unitDiv);
+    });
+  </script>
+</body>
+</html>

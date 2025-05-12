@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atomic Habits Course Directory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f9f9f9;
+            margin: 10%;
+            padding: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: flex-start;
+            align-content: flex-start;
+        }
+
+        .unit-card {
+
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            width: 20vw;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .unit-card.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .unit-card h2 {
+            font-size: 1.5rem;
+            margin: 0 0 1rem 0;
+            color: #333333;
+            font-weight: 700;
+        }
+
+        .unit-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .unit-card li {
+            font-size: 1rem;
+            color: #555555;
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .unit-card li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #007bff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="unit-card">
+        <h2>1. 原子習慣威力有多大？</h2>
+        <ul>
+            <li>原子習慣的驚人力量</li>
+            <li>別管目標，專注於系統</li>
+            <li>改變身分認同</li>
+            <li>習慣養成的四步驟</li>
+        </ul>
+    </div>
+    <div class="unit-card">
+        <h2>2. 法則一：讓提示顯而易見</h2>
+        <ul>
+            <li>使用習慣積分卡</li>
+            <li>給習慣時間和地點</li>
+            <li>習慣堆疊法</li>
+            <li>改變環境法</li>
+        </ul>
+    </div>
+    <div class="unit-card">
+        <h2>3. 法則二：讓習慣有吸引力</h2>
+        <ul>
+            <li>讓習慣有吸引力</li>
+            <li>誘惑綑綁法</li>
+            <li>模仿他人法</li>
+            <li>轉念法</li>
+        </ul>
+    </div>
+    <div class="unit-card">
+        <h2>4. 法則三：讓行動輕而易舉</h2>
+        <ul>
+            <li>頻率比時間重要</li>
+            <li>最小努力原則</li>
+            <li>兩分鐘法則</li>
+        </ul>
+    </div>
+    <div class="unit-card">
+        <h2>5. 法則四：讓獎賞令人滿足</h2>
+        <ul>
+            <li>讓獎賞令人滿足</li>
+            <li>迴紋針策略</li>
+            <li>習慣追蹤器</li>
+            <li>絕不錯過兩次</li>
+        </ul>
+    </div>
+    <div class="unit-card">
+        <h2>6. 總結</h2>
+        <ul>
+            <li>回顧與總結</li>
+        </ul>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const cards = document.querySelectorAll(".unit-card");
+
+            // 為每個卡片添加點擊事件
+            cards.forEach((card, index) => {
+                // 添加進場動畫
+                setTimeout(() => card.classList.add("show"), index * 150);
+
+                // 根據卡片的索引跳轉到不同的頁面
+                card.addEventListener("click", () => {
+                    switch (index) {
+                        case 0:
+                            window.location.href = "page1.html"; // 第一個卡片跳轉到 page1.html
+                            break;
+                        case 1:
+                            window.location.href = "page2.html"; // 第二個卡片跳轉到 page2.html
+                            break;
+                        case 2:
+                            window.location.href = "page1.html"; // 第三個卡片跳轉到 page3.html
+                            break;
+                        case 3:
+                            window.location.href = "page1.html"; // 第四個卡片跳轉到 page4.html
+                            break;
+                        case 4:
+                            window.location.href = "page1.html"; // 第五個卡片跳轉到 page5.html
+                            break;
+                        case 5:
+                            window.location.href = "page1.html"; // 第六個卡片跳轉到 summary.html
+                            break;
+                        default:
+                            console.error("未知的卡片索引");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

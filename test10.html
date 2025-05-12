@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>問答互動</title>
+    <style>
+        body {
+            overflow: hidden;
+            font-family: "Arial", sans-serif;
+            background-color: #0d1321;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #0D1321;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .question-box {
+            margin: 10px auto;
+            font-size: 1.6em;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            position: relative;
+            padding: 20px;
+            margin: 20px 0;
+            background-color: #2a2e39;
+            border-radius: 12px;
+            border: 2px solid #555;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom-width: 3.8px;
+        }
+
+        .option:hover {
+            background-color: #343a4b;
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #888;
+            border-radius: 6px;
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1c1f26;
+        }
+
+        .option.correct {
+            background-color: #2f5d2f;
+            border-color: #58CC02;
+        }
+
+        .option.correct .checkbox {
+            background-image: url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMSIgaGVpZ2h0PSIxNSI+PHBhdGggZmlsbD0iIzU4Q0MwMiIgZmlsbC1ydWxlPSJub256ZXJvIiBkPSJNOC4zMzUgMTAuMjA4bDguNjk3LTguNjk3YTIgMiAwIDAgMSAyLjgyOSAyLjgyOGwtOS40NTQgOS40NTRhMi45MyAyLjkzIDAgMCAxLTQuMTQ0IDBMMS4zMTUgOC44NDVhMiAyIDAgMSAxIDIuODI4LTIuODI5bDQuMTkyIDQuMTkyeiIvPjwvc3ZnPg==");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 18px;
+            border-color: #58CC02;
+        }
+
+        .option.wrong {
+            background-color: #5c1f1f;
+            border-color: #e84a4a;
+        }
+
+        .option.wrong .checkbox {
+            background-image: url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCI+PHBhdGggZmlsbD0iI0U1RTVFNSIgZmlsbC1ydWxlPSJub256ZXJvIiBkPSJNNC4xMzUgMS4zMDdsNC45ODIgNC45OCA0Ljk4My00Ljk4YTIgMiAwIDAgMSAyLjctLjExN2wuMTI4LjExN2EyIDIgMCAwIDEgMCAyLjgyOGwtNC45ODIgNC45ODIgNC45ODIgNC45ODNhMiAyIDAgMCAxLTIuODI4IDIuODI4bC00Ljk4My00Ljk4Mi00Ljk4MiA0Ljk4MmEyIDIgMCAwIDEtMi43MDEuMTE3bC0uMTI3LS4xMTdhMiAyIDAgMCAxIDAtMi44MjhsNC45OC00Ljk4My00Ljk4LTQuOTgyYTIgMiAwIDEgMSAyLjgyOC0yLjgyOHoiLz48L3N2Zz4=");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 16px;
+            border-color: #e84a4a;
+        }
+
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        #explanation {
+            margin-top: 20px;
+            font-size: 1em;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="question-box" id="question"></div>
+        <div class="options" id="options"></div>
+        <div id="explanation"></div>
+    </div>
+
+    <script>
+        const questionText = document.getElementById("question");
+        const optionsContainer = document.getElementById("options");
+        const explanation = document.getElementById("explanation");
+        const questionId = "page1-1";
+
+        const questions = [
+            {
+                question: "穿山甲的生活習性為何？",
+                options: [
+                    { text: "喜愛白天曬太陽，晚上進行瑜伽冥想", correct: false },
+                    { text: "是夜行性動物，透過嗅覺和聽覺尋找食物", correct: true },
+                    { text: "喜愛參加動物派對，並擅長跳探戈", correct: false },
+                    { text: "主要以捕捉老虎和鯨魚為生", correct: false }
+                ]
+            }
+        ];
+
+        function loadQuestion() {
+            const currentQuestion = questions[0];
+            questionText.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = "";
+            explanation.textContent = "";
+
+            const answered = sessionStorage.getItem(questionId) === "complete";
+
+            currentQuestion.options.forEach((option, index) => {
+                const optionDiv = document.createElement("div");
+                optionDiv.classList.add("option");
+                optionDiv.innerHTML = `
+                    <div class="checkbox"></div>
+                    <span>${option.text}</span>
+                `;
+                if (answered) {
+                    if (option.correct) {
+                        optionDiv.classList.add("correct");
+                    }
+                    optionDiv.classList.add("disabled");
+                } else {
+                    optionDiv.onclick = () => checkAnswer(optionDiv, option.correct);
+                }
+                optionsContainer.appendChild(optionDiv);
+            });
+        }
+
+        function checkAnswer(clickedOption, isCorrect) {
+            const allOptions = document.querySelectorAll(".option");
+
+            allOptions.forEach(opt => {
+                opt.classList.add("disabled");
+                opt.onclick = null;
+            });
+
+            if (isCorrect) {
+                clickedOption.classList.add("correct");
+            } else {
+                clickedOption.classList.add("wrong");
+                const correctOption = Array.from(allOptions).find((opt, i) => questions[0].options[i].correct);
+                if (correctOption) correctOption.classList.add("correct");
+            }
+
+            sessionStorage.setItem(questionId, "complete");
+        }
+
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
